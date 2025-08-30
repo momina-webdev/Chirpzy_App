@@ -1,0 +1,120 @@
+ * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fafafa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: auto;
+    }
+
+    .signup-box {
+      background-color: white;
+      border: 1px solid #ddd;
+      padding: 20px 30px;
+      width: 350px;
+      text-align: center;
+      box-shadow: 0 0 5px rgba(0,0,0,0.05);
+      border-radius: 8px;
+    }
+
+    .logo {
+      font-family: 'Segoe UI', cursive;
+      font-size: 38px;
+      margin-bottom: 10px;
+    }
+
+    .tagline {
+      color: #8e8e8e;
+      font-size: 16px;
+      margin-bottom: 15px;
+      font-weight: 500;
+    }
+
+    .input-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .input-box input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .signup-btn {
+      background-color: #3E4E88;
+      color: white;
+      border: none;
+      padding: 10px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+      color: #888;
+      font-size: 13px;
+    }
+
+    .divider span {
+      flex: 1;
+      height: 1px;
+      background-color: #ccc;
+      margin: 0 10px;
+    }
+    .fb-btn {
+      background-color:#3E4E88 ;
+      color: white;
+      padding: 10px;
+      width: 100%;
+      font-weight: bold;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+    a{
+      text-decoration:none;
+    }
+    .terms {
+      font-size: 12px;
+      color: #8e8e8e;
+      margin-top: 15px;
+      line-height: 1.5;
+    }
+
+    .login-link {
+      margin-top: 25px;
+      font-size: 14px;
+    }
+
+    .login-link a {
+      color: #3E4E88;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    @media (max-width: 400px) {
+      .signup-box {
+        width: 90%;
+        padding: 30px 20px;
+      }
+    }

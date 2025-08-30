@@ -1,0 +1,125 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+<link rel="stylesheet" href="{% static 'css/follow.css' %}">
+
+<div class="main">
+  <div class="profile-container">
+
+    <!-- 🔹 Profile Header -->
+    <div class="profile-header">
+      {% if profile.profile_image %}
+        <img src="{{ profile.profile_image.url }}" alt="Profile" class="profile-img" />
+      {% else %}
+        <img src="https://randomuser.me/api/portraits/men/34.jpg" alt="Default" class="profile-img" />
+      {% endif %}
+
+      <div class="profile-details">
+        <div class="profile-top">
+          <h2>{{ request.user.username }}</h2>
+          <button class="follow-btn" onclick="openModal()">Edit Profile</button>
+        </div>
+
+        <!-- 🔹 Stats -->
+        <div class="profile-stats">
+          <span><strong>{{ post_count }}</strong> posts</span>
+          <span><strong>{{ followers }}</strong> followers</span>
+          <span><strong>{{ following }}</strong> following</span>
+        </div>
+
+        <!-- 🔹 Bio -->
+        <div class="profile-bio">
+          <p>
+            <strong>{{ request.user.first_name|default:"" }} {{ request.user.last_name|default:"" }}</strong>
+          </p>
+          <p style="color: var(--main-blue);">{{ profile.bio|default:"No bio yet." }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🔹 Posts -->
+    <div class="post-grid">
+      {% for post in posts %}
+        <div class="post-container">
+          <img src="{{ post.image.url }}" alt="Post Image" />
+          <form method="POST" action="{% url 'delete_post' post.id %}">
+            {% csrf_token %}
+            <button type="submit" class="delete-icon">🗑️</button>
+          </form>
+        </div>
+      {% empty %}
+        <p style="margin-top:20px;">No posts yet.</p>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+
+<!-- 🔹 Rightbar (Followers) -->
+<div class="rightbar">
+  <span class="close-rightbar" onclick="closeRightbar()">&times;</span>
+  <h3>Who's Following You</h3>
+
+  {% for user in follower_users %}
+    <div class="follower">
+      <a href="{% url 'follow' user.username %}">
+        {% if user.userprofile.profile_image %}
+          <img src="{{ user.userprofile.profile_image.url }}" alt="{{ user.username }}">
+        {% else %}
+          <img src="{% static 'images/default.jpg' %}" alt="Default">
+        {% endif %}
+      </a>
+      <div class="text">
+        <p><strong>{{ user.username }}</strong></p>
+        <a href="{% url 'follow' user.username %}" style="color: var(--main-blue);">View Profile</a>
+      </div>
+    </div>
+  {% empty %}
+    <p>No one is following you yet.</p>
+  {% endfor %}
+</div>
+
+<!-- 🔹 Edit Modal -->
+<div id="editModal" class="modal-overlay">
+  <div class="modal-content">
+    <h3>Edit Profile</h3>
+    <form method="POST" enctype="multipart/form-data" action="{% url 'edit_profile' %}">
+      {% csrf_token %}
+      <label>Profile Image:</label>
+      <input type="file" name="profile_image">
+
+      <label>Bio:</label>
+      <textarea name="bio" rows="4">{{ profile.bio }}</textarea>
+
+      <div class="modal-actions">
+        <button type="submit" class="follow-btn">Save</button>
+        <button type="button" onclick="closeModal()" class="follow-btn" style="background: gray;">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 🔹 Scripts -->
+<script>
+  function openModal() {
+    document.getElementById("editModal").style.display = "flex";
+  }
+
+  function closeModal() {
+    document.getElementById("editModal").style.display = "none";
+  }
+
+  function openRightbar() {
+    document.querySelector(".rightbar").classList.add("active");
+  }
+
+  function closeRightbar() {
+    let rightbar = document.querySelector(".rightbar");
+    if (rightbar) {
+      rightbar.classList.remove("active");
+    }
+  }
+</script>
+{% endblock %}

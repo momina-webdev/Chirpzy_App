@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chirpzy – Fast. Fun</title>
+  <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'css/register.css' %}">
+</head>
+<body>
+  <div class="signup-box">
+    
+    <!-- 🔹 Logo + Tagline -->
+    <div class="logo">Chirpzy</div>
+    <div class="tagline">Sign up to see photos and videos from your friends.</div>
+
+    <!-- 🔹 Google Login -->
+    <a href="{% url 'social:begin' 'google-oauth2' %}" class="fb-btn">
+      <img src="https://img.icons8.com/color/24/google-logo.png" alt="Google Icon" />
+      Log in with Google
+    </a>
+
+    <!-- 🔹 Divider -->
+    <div class="divider">
+      <span></span>
+      OR
+      <span></span>
+    </div>
+
+    <!-- 🔹 Signup Form -->
+    <form method="post">
+      {% csrf_token %}
+      <div class="input-box">
+        <input type="text" name="username" placeholder="Username" required />
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required />
+      </div>
+      <button type="submit" class="signup-btn">Sign Up</button>
+    </form>
+
+    <!-- 🔹 Terms -->
+    <div class="terms">
+      By signing up, you agree to our 
+      <a href="#">Terms</a>, <a href="#">Privacy Policy</a> and <a href="#">Cookies Policy</a>.
+    </div>
+
+    <!-- 🔹 Login Link -->
+    <div class="login-link">
+      Have an account? <a href="{% url 'login' %}">Log in</a>
+    </div>
+  </div>
+</body>
+</html>

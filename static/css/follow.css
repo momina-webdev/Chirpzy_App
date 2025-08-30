@@ -1,0 +1,334 @@
+ :root {
+    --main-blue: #3E4E88;
+    --light-gray: #f5f5f5;
+    --dark-gray: #333;
+    --btn-radius: 6px;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+  }
+
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .profile-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 20px;
+  }
+
+  .profile-img {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ccc;
+  }
+
+  .profile-details {
+    flex: 1;
+  }
+
+  .profile-top {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .profile-top h2 {
+    font-size: 28px;
+  }
+
+  .follow-btn {
+    background-color: var(--main-blue);
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: var(--btn-radius);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .follow-btn:hover {
+    background-color: #2f3a66;
+  }
+
+  /* 🔹 Stats Row */
+  .profile-stats {
+    margin: 15px 0;
+    display: flex;
+    gap: 40px;
+    font-size: 16px;
+    align-items: center;
+  }
+
+  .profile-stats span {
+    cursor: pointer;
+  }
+
+  .profile-bio p {
+    margin: 4px 0;
+  }
+
+  .post-grid {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
+  }
+
+  .post-grid img {
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+
+  .rightbar {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    top: 0px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    position: relative;
+  }
+
+  .rightbar h3 {
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 1px solid var(--main-blue);
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+  }
+
+  .follower {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .follower img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+
+  .follower .text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .follower .text p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 300;
+  }
+
+  .follower .text a {
+    font-size: 13px;
+    color: var(--main-blue);
+    text-decoration: none;
+    margin-top: 2px;
+  }
+
+  /* Modal Overlay */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-content {
+    background: linear-gradient(to bottom right, #f8fcff, #e4f0fa);
+    padding: 30px 25px;
+    border-radius: 14px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    border: 1px solid #cde4f5;
+  }
+
+  .modal-content h3 {
+    margin-bottom: 20px;
+    color: var(--main-blue);
+    font-size: 22px;
+    text-align: center;
+  }
+
+  .modal-content label {
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+    color: #333;
+  }
+
+  .modal-content input[type="file"],
+  .modal-content textarea {
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px;
+    border-radius: var(--btn-radius);
+    border: 1px solid #ccc;
+    font-size: 14px;
+    background-color: #fff;
+  }
+
+  .modal-content button {
+    margin-top: 20px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: var(--btn-radius);
+    font-size: 14px;
+  }
+
+  .modal-content .follow-btn {
+    margin-right: 10px;
+  }
+
+  img {
+    cursor: pointer;
+  }
+
+  .post-container {
+    position: relative;
+    display: inline-block;
+    margin: 10px;
+  }
+
+  .post-container img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 10px;
+  }
+
+  .delete-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 5px;
+    border-radius: 50%;
+    display: none;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  .post-container:hover .delete-icon {
+    display: block;
+  }
+
+  /* 🔹 Responsive Layout */
+
+
+   
+
+  @media (max-width: 600px) {
+    .post-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    .modal-content {
+      width: 95%;
+      padding: 20px;
+    }
+
+    .profile-top h2 {
+      font-size: 20px;
+    }
+
+    .profile-stats {
+      font-size: 13px;
+      gap: 15px;
+    }
+  }
+/* -------- Responsive CSS -------- */
+
+/* Tablet & Mobile Rightbar Overlay */
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; margin: 10px; }
+  .sidebar { display: none; }
+
+  .rightbar {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: -100%;  /* hidden by default */
+    width: 100%;   /* full width */
+    height: 100%;
+    background: #fff;
+    transition: right 0.3s ease-in-out;
+    z-index: 9999;
+    overflow-y: auto;
+    padding: 20px;
+  }
+  .rightbar.active { right: 0; } /* show on active */
+
+  .close-rightbar {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+  }
+
+  .create-post { display: block; } /* show plus icon */
+}
+  /* 🔹 Responsive Layout */
+  @media (max-width: 1024px) {
+    .profile-header {
+      flex-direction: column;
+      align-items: flex-center;
+      gap: 15px;
+    }
+
+    .profile-img {
+      width: 100px;
+      height: 100px;
+    }
+
+    .profile-top {
+      flex-direction: column;
+      align-items: flex-center;
+      gap: 10px;
+    }
+
+    .profile-stats {
+      gap: 20px;
+      font-size: 14px
+      ;
+      flex-direction: row;   /* horizontal */
+  justify-content: center; /* center me line ho */
+      align-items: flex-center;
+    }
+
+    .post-grid {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      align-items: flex-center;
+    }
+  }

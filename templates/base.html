@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chirpzy – Fast. Fun</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon" />
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Lottie -->
+  <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav>
+    <div class="logo">Chirpzy</div>
+
+    <!-- Hamburger (Mobile Only) -->
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+
+    <!-- Nav Links -->
+    <div class="nav-links">
+      {% if request.resolver_match.url_name == "index" %}
+        <div class="openPostModal create-post">
+          <i class="fa-solid fa-circle-plus"></i>
+        </div>
+      {% endif %}
+
+      <a href="/"><img src="https://img.icons8.com/material-outlined/24/ffffff/home--v2.png" /></a>
+      <img src="https://img.icons8.com/ios-glyphs/30/ffffff/like--v1.png" alt="Like" class="like-icon" />
+
+      <a href="{% url 'profile' %}">
+        <img src="https://img.icons8.com/material-outlined/24/ffffff/user.png" alt="User Icon" />
+      </a>
+
+      <img src="https://img.icons8.com/ios-glyphs/30/ffffff/conference-call.png"
+           class="followers-icon"
+           title="Followers"
+           onclick="openRightbar()" />
+
+      <!-- Logout Icon -->
+      <div class="create-post">
+        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hidden Logout Form -->
+  <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+    {% csrf_token %}
+  </form>
+
+  <!-- Layout -->
+  <div class="layout">
+    <div class="sidebar">
+      <ul>
+        <li><i class="fa-solid fa-house home-icon"></i><span>News Feed</span></li>
+        <li><i class="fa-solid fa-envelope icon-style"></i><span>Inbox</span></li>
+        <li><i class="fa-solid fa-user-group icon-style"></i><span>Friends</span></li>
+        <li><i class="fa-solid fa-image icon-style"></i><span>Images</span></li>
+        <li class="openPostModal"><i class="fa-solid fa-circle-plus icon-style"></i><span>Create Post</span></li>
+        <li><i class="fa-solid fa-envelope icon-style"></i><span>Messages</span></li>
+        <li><i class="fa-solid fa-bell icon-style"></i><span>Notifications</span></li>
+        <li><i class="fa-solid fa-location-dot icon-style"></i><span>People Nearby</span></li>
+        <li><i class="fa-solid fa-chart-bar icon-style"></i><span>Insights</span></li>
+        <li>
+          <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <i class="fa-solid fa-right-from-bracket icon-style"></i><span>Logout</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Body Content -->
+    {% block body %}{% endblock body %}
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    // Open Post Modal
+    document.querySelectorAll(".openPostModal").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        let modal = document.getElementById("postModal");
+        if (modal) modal.style.display = "flex";
+      });
+    });
+
+    // Rightbar Functions
+    function openRightbar() {
+      let rightbar = document.querySelector(".rightbar");
+      if (rightbar) rightbar.classList.add("active");
+    }
+    function closeRightbar() {
+      let rightbar = document.querySelector(".rightbar");
+      if (rightbar) rightbar.classList.remove("active");
+    }
+
+    // Post Form Submit
+    const postForm = document.getElementById("postForm");
+    if (postForm) {
+      postForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const animationDiv = document.getElementById("postSuccessAnimation");
+        animationDiv.style.display = "block";
+
+        fetch("{% url 'create_post' %}", {
+          method: "POST",
+          headers: { "X-CSRFToken": "{{ csrf_token }}" },
+          body: formData
+        })
+        .then(response => {
+          if (response.ok) {
+            setTimeout(() => {
+              animationDiv.style.display = "none";
+              location.reload();
+            }, 2000);
+          } else {
+            alert("Failed to create post.");
+            animationDiv.style.display = "none";
+          }
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          animationDiv.style.display = "none";
+        });
+      });
+    }
+
+    // Toggle Mobile Menu
+    function toggleMenu() {
+      document.querySelector(".nav-links").classList.toggle("active");
+    }
+  </script>
+</body>
+</html>

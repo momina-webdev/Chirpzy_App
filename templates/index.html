@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% load static %}
+<script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module"></script>
+
+{% block body %}
+<!--  Success Animation -->
+<div id="postSuccessAnimation" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:9999;">
+  <dotlottie-wc 
+    src="https://lottie.host/b6324790-81e7-4545-986f-7172d36f05d4/B2DvnH1ozx.lottie" 
+    style="width: 300px; height: 250px;" 
+    autoplay 
+    loop>
+  </dotlottie-wc>
+</div>
+
+<!--  Main Feed -->
+<div class="main">
+  {% for post in posts %}
+  <div class="post" data-id="{{ post.id }}">
+
+    <!-- Post Header -->
+    <div class="post-header">
+      <a href="{% url 'follow' post.user.username %}">
+        {% if post.user.userprofile.profile_image %}
+          <img src="{{ post.user.userprofile.profile_image.url }}" class="profile-pic" />
+        {% else %}
+          <img src="{% static 'images/default.jpg' %}" class="profile-pic" />
+        {% endif %}
+      </a>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <strong>{{ post.user.username }}</strong><br />
+          <small>{{ post.created_at }}</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Caption -->
+    <div class="caption">{{ post.caption }}</div>
+
+    <!-- Post Image -->
+    <img class="post-img" src="{{ post.image.url }}" onclick="addView({{ post.id }})" />
+
+    <!-- Post Footer (Like & Comment Button) -->
+    <div class="post-footer">
+      <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="post_id" value="{{ post.id }}">
+        <input type="hidden" name="action" value="like">
+        <button type="submit" style="background:none; border:none; cursor:pointer;">
+          <i class="fa-regular fa-thumbs-up" style="font-size:20px;"></i> {{ post.total_likes }}
+        </button>
+      </form>
+
+      <button onclick="openCommentsModal({{ post.id }})" title="View Comments" style="background:none; border:none; cursor:pointer;">
+        <i class="fa-regular fa-comment comment-icon" style="font-size:20px;"></i>
+        {{ post.comments.count }} comments
+      </button>
+    </div>
+
+    <!-- Add Comment -->
+    <form method="POST" action="{% url 'add_comment' post.id %}" class="comment-box">
+      {% csrf_token %}
+      <input type="text" name="content" placeholder="Add a comment..." required />
+      <button type="submit">Post</button>
+    </form>
+
+    <!-- Comments Section (Hidden for Modal) -->
+    <div id="comments-{{ post.id }}" style="display:none;">
+      {% for comment in post.comments.all %}
+        <div class="comment-item">
+          <img src="{% if comment.user.userprofile.profile_image %}{{ comment.user.userprofile.profile_image.url }}{% else %}{% static 'images/default.jpg' %}{% endif %}" />
+          <div>
+            <strong>{{ comment.user.username }}</strong><br />
+            <small>{{ comment.created_at|date:"M d, Y H:i" }}</small><br />
+            {{ comment.content }}
+          </div>
+        </div>
+      {% empty %}
+        <p>No comments yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!--  Comments Modal -->
+<div class="modal" id="commentsModal">
+  <div class="modal-content" style="max-height: 500px; overflow-y: auto;">
+    <span class="close-btn" onclick="closeCommentsModal()">&times;</span>
+    <h2>Comments</h2>
+    <div id="commentsModalContent"></div>
+  </div>
+</div>
+
+<!--  Create Post Modal -->
+<div class="modal" id="postModal">
+  <div class="modal-content">
+    <span class="close-btn" id="closeModal">&times;</span>
+    <h2>Create Post</h2>
+    <form id="postForm" enctype="multipart/form-data" onsubmit="return false;">
+      {% csrf_token %}
+      <input type="file" name="image" class="modal-file" required /><br><br>
+      <textarea name="caption" placeholder="What's on your mind?" class="modal-textarea"></textarea><br><br>
+      <button type="button" class="post-btn" onclick="submitPost()">Share Post</button>
+    </form>
+  </div>
+</div>
+
+<!--  Rightbar -->
+<div class="rightbar">
+  <span class="close-rightbar" onclick="closeRightbar()">&times;</span>
+  <h3>SUGGESTIONS FOR YOU</h3>
+  {% for user in active_users %}
+    <div class="follower">
+      <a href="{% url 'follow' user.username %}">
+        {% if user.userprofile.profile_image %}
+          <img src="{{ user.userprofile.profile_image.url }}" alt="{{ user.username }}">
+        {% else %}
+          <img src="{% static 'images/default.jpg' %}" alt="Default">
+        {% endif %}
+      </a>
+      <div class="text">
+        <p><strong>{{ user.username }}</strong></p>
+        <a href="{% url 'follow' user.username %}">Follow</a>
+      </div>
+    </div>
+  {% empty %}
+    <p>You've already followed everyone!</p>
+  {% endfor %}
+</div>
+
+<!-- ✅ Scripts -->
+<script>
+  // Submit Post (AJAX + Animation)
+  function submitPost() {
+    const form = document.getElementById("postForm");
+    const formData = new FormData(form);
+    const animationDiv = document.getElementById("postSuccessAnimation");
+    animationDiv.style.display = "block";
+
+    fetch("{% url 'create_post' %}", {
+      method: "POST",
+      headers: { "X-CSRFToken": "{{ csrf_token }}" },
+      body: formData
+    })
+    .then(response => {
+      if (response.ok) {
+        setTimeout(() => {
+          animationDiv.style.display = "none";
+          location.reload();
+        }, 4000);
+      } else {
+        alert("Failed to create post.");
+        animationDiv.style.display = "none";
+      }
+    })
+    .catch(error => {
+      console.error("Error:", error);
+      animationDiv.style.display = "none";
+    });
+  }
+
+  // Open Comments Modal
+  function openCommentsModal(postId) {
+    const commentDiv = document.getElementById(`comments-${postId}`);
+    const modal = document.getElementById("commentsModal");
+    const content = document.getElementById("commentsModalContent");
+    content.innerHTML = commentDiv.innerHTML;
+    modal.style.display = "flex";
+  }
+
+  // Close Comments Modal
+  function closeCommentsModal() {
+    document.getElementById("commentsModal").style.display = "none";
+  }
+
+  // Modal Handling
+  document.addEventListener("DOMContentLoaded", function () {
+    const openBtn = document.getElementById("openPostModal");
+    const modal = document.getElementById("postModal");
+    const closeBtn = document.getElementById("closeModal");
+
+    if (openBtn) {
+      openBtn.addEventListener("click", () => modal.style.display = "flex");
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => modal.style.display = "none");
+    }
+
+    window.addEventListener("click", function (e) {
+      if (e.target === modal || e.target === document.getElementById("commentsModal")) {
+        modal.style.display = "none";
+        document.getElementById("commentsModal").style.display = "none";
+      }
+    });
+  });
+
+  // Rightbar Functions
+  function openRightbar() {
+    document.querySelector(".rightbar")?.classList.add("active");
+  }
+
+  function closeRightbar() {
+    document.querySelector(".rightbar")?.classList.remove("active");
+  }
+</script>
+{% endblock body %}

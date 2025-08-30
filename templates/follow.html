@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+<link rel="stylesheet" href="{% static 'css/follow.css' %}">
+
+<div class="main">
+  <div class="profile-container">
+    
+    <!-- Profile Header -->
+    <div class="profile-header">
+      {% if profile.profile_image %}
+        <img src="{{ profile.profile_image.url }}" alt="Profile" class="profile-img" />
+      {% else %}
+        <img src="https://i.pinimg.com/236x/2c/47/d5/2c47d5dd5b532f83bb55c4cd6f5bd1ef.jpg" alt="Default" class="profile-img" />
+      {% endif %}
+
+      <div class="profile-details">
+        <div class="profile-top">
+          <h2>{{ profile.user.username }}</h2>
+
+          <!-- Follow / Unfollow Button -->
+          {% if request.user != profile_user %}
+            <form method="post" action="{% url 'toggle_follow' profile_user.username %}">
+              {% csrf_token %}
+              <button class="follow-btn" type="submit">
+                {% if is_following %}Unfollow{% else %}Follow{% endif %}
+              </button>
+            </form>
+          {% endif %}
+        </div>
+
+        <!-- Stats -->
+        <div class="profile-stats">
+          <span><strong>{{ post_count }}</strong> posts</span>
+          <span><strong>{{ followers }}</strong> followers</span>
+          <span><strong>{{ following }}</strong> following</span>
+        </div>
+
+        <!-- Bio -->
+        <div class="profile-bio">
+          <p><strong>{{ request.user.first_name|default:"" }} {{ request.user.last_name|default:"" }}</strong></p>
+          <p class="bio-text">{{ profile.bio|default:"No bio yet." }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Posts -->
+    {% if posts %}
+      <div class="post-grid">
+        {% for post in posts %}
+          <img src="{{ post.image.url }}" alt="Post Image" />
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="no-posts">No posts yet.</p>
+    {% endif %}
+
+  </div>
+</div>
+
+<!-- Rightbar -->
+<div class="rightbar">
+  <span class="close-rightbar" onclick="closeRightbar()">&times;</span>
+  <h3>People You May Know</h3>
+
+  {% for user in suggested_users %}
+    <div class="follower">
+      <a href="{% url 'follow' user.username %}">
+        {% if user.userprofile.profile_image %}
+          <img src="{{ user.userprofile.profile_image.url }}" alt="{{ user.username }}">
+        {% else %}
+          <img src="https://i.pinimg.com/236x/2c/47/d5/2c47d5dd5b532f83bb55c4cd6f5bd1ef.jpg" alt="Default">
+        {% endif %}
+      </a>
+      <div class="text">
+        <p><strong>{{ user.username }}</strong></p>
+        <a href="{% url 'follow' user.username %}">Follow</a>
+      </div>
+    </div>
+  {% empty %}
+    <p>No suggestions right now.</p>
+  {% endfor %}
+</div>
+
+{% endblock %}
