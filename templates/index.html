@@ -14,7 +14,7 @@
 </div>
 
 <!--  Main Feed -->
-<div class="main">
+<div class="main" >
   {% for post in posts %}
   <div class="post" data-id="{{ post.id }}">
 
@@ -43,12 +43,14 @@
 
     <!-- Post Footer (Like & Comment Button) -->
     <div class="post-footer">
-      <form method="POST">
+      <form method="POST" class="like-form" >
         {% csrf_token %}
         <input type="hidden" name="post_id" value="{{ post.id }}">
         <input type="hidden" name="action" value="like">
         <button type="submit" style="background:none; border:none; cursor:pointer;">
-          <i class="fa-regular fa-thumbs-up" style="font-size:20px;"></i> {{ post.total_likes }}
+          <i class="fa-regular fa-thumbs-up" style="font-size:20px;"></i> 
+<span id="likes-count-{{ post.id }}">{{ post.total_likes }}</span>
+
         </button>
       </form>
 
@@ -205,5 +207,32 @@
   function closeRightbar() {
     document.querySelector(".rightbar")?.classList.remove("active");
   }
+
+  // ✅ Like form AJAX (no reload)
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".like-form").forEach(form => {
+    form.addEventListener("submit", function (e) {
+      e.preventDefault(); // stop page reload
+
+      const postId = this.querySelector("input[name='post_id']").value;
+      const formData = new FormData(this);
+
+      fetch(window.location.href, {
+        method: "POST",
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById(`likes-count-${postId}`).innerText = data.likes_count;
+        }
+      })
+      .catch(err => console.error("Error:", err));
+    });
+  });
+});
+
 </script>
 {% endblock body %}
+
