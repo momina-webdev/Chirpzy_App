@@ -3,16 +3,20 @@
 body { background-color: #F7F9FC; color: #1A1A1A; min-height: 100vh; }
 
 nav {
-  background-color: #3E4E88;
-  padding: 12px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  z-index: 50;
-
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background-color: #3E4E88;
+    padding: 12px 30px;
+    display: flex
+;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 50;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0px;
 }
+
+
+
 
 
 .logo { font-size: 28px; font-weight: bold; color: #ffffff; letter-spacing: 1px; }
@@ -70,9 +74,10 @@ nav {
 .sidebar ul li:hover { color: #0d0d0eff; font-weight: bold; }
 
 /* Main Content */
-.main { display: flex; flex-direction: column; gap: 20px; }
+.main {  display: flex; flex-direction: column; gap: 20px; }
 .post { 
   background: white; 
+  
   border-radius: 8px; 
   overflow: hidden; 
   border: 1px solid #e0e0e0; 
@@ -286,14 +291,7 @@ span { font-weight: 500; margin-left: 9px; }
   }
 }
 /* Navbar base */
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #3E4E88;
-  padding: 10px 20px;
-  position: relative;
-}
+
 
 .logo {
   font-size: 22px;
@@ -353,4 +351,5 @@ nav {
     font-size: 28px;
   }
 }
+
 
